@@ -1,13 +1,14 @@
 const router = require("express").Router();
 const User = require("../models/User");
-const helperFunctions = require("./../helper/helperFunctions");
-const bcrypt = require("bcrypt");
+
+const jwt = require("jsonwebtoken");
+const { comparePasswords } = require("../helper/comparePasswords");
+const { hashedPassword } = require("../helper/hashedPassword");
 
 //REGISTER
 router.post("/register", async (req, res) => {
   try {
-    // const hashedPass = await hashedPassword(req.body.password);
-    const hashedPass = await helperFunctions.hashedPassword(req.body.password);
+    const hashedPass = await hashedPassword(req.body.password);
     const newUser = new User({
       username: req.body.username,
       email: req.body.email,
@@ -26,19 +27,31 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({ username: req.body.username });
-    // !user && res.status(400).json("Wrong credentials!");
+
     if (!user) {
       res.status(400).json("Wrong credentials!");
       return;
     }
-    const validated = await bcrypt.compare(req.body.password, user.password);
-    // !validated && res.status(400).json("Wrong credentials!");
+    const validated = await comparePasswords(
+      req.body.password,
+      user.password
+    );
+
     if (!validated) {
       res.status(400).json("Wrong credentials!");
       return;
     }
+
+    const accessToken = jwt.sign(
+      {
+        id: user._id,
+      },
+      process.env.JWT_SEC,
+      { expiresIn: "3d" }
+    );
+
     const { password, ...others } = user._doc;
-    res.status(200).json(others);
+    res.status(200).json({ ...others, accessToken });
   } catch (err) {
     res.status(500).json(err);
   }
