@@ -9,6 +9,17 @@ const { hashedPassword } = require("../helper/hashedPassword");
 router.post("/register", async (req, res) => {
   try {
     const hashedPass = await hashedPassword(req.body.password);
+    const username = await User.find({ username: req.body.username });
+    const email = await User.find({ email: req.body.email });
+
+    if (username.length !== 0) {
+      res.status(401).json("Username already exist...");
+      return;
+    } else if (email.length !== 0) {
+      res.status(401).json("Email already exist...");
+      return;
+    }
+
     const newUser = new User({
       username: req.body.username,
       email: req.body.email,
@@ -32,10 +43,7 @@ router.post("/login", async (req, res) => {
       res.status(400).json("Wrong credentials!");
       return;
     }
-    const validated = await comparePasswords(
-      req.body.password,
-      user.password
-    );
+    const validated = await comparePasswords(req.body.password, user.password);
 
     if (!validated) {
       res.status(400).json("Wrong credentials!");
