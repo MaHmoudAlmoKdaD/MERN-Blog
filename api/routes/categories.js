@@ -17,4 +17,29 @@ router.post("/:userId", verifyToken, async (req, res) => {
   }
 });
 
+// UPDATE
+router.put("/:id/:userId", verifyToken, async (req, res) => {
+  if (req.user.id === req.params.userId) {
+    try {
+      const category = await Category.findById(req.params.id);
+      if (category.length !== 0) {
+        const updatedCat = await Category.findByIdAndUpdate(
+          req.params.id,
+          {
+            $set: req.body,
+          },
+          { new: true }
+        );
+        res.status(200).json(updatedCat);
+      } else {
+        res.status(401).json("Post does not exist...");
+      }
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  } else {
+    res.status(401).json("You are not authenticated!");
+  }
+});
+
 module.exports = router;
