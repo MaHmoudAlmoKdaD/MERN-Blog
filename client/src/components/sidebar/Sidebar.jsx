@@ -1,6 +1,16 @@
 import "./sidebar.css";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function Sidebar() {
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+    const fetchCategories = async () => {
+      await axios("category").then((res) => setCategories(res.data));
+    };
+    fetchCategories();
+  }, []);
+
   return (
     <div className="sidebar">
       <div className="sidebarItem">
@@ -10,19 +20,24 @@ export default function Sidebar() {
           alt=""
         />
         <p>
-          Lorem, ipsum dolor sit amet  adipisicing elit. Optio facere
-          ipsum soluta perferendis.
+          Lorem, ipsum dolor sit amet adipisicing elit. Optio facere ipsum
+          soluta perferendis.
         </p>
       </div>
       <div className="sidebarItem">
         <span className="sidebarTitle">CATEGORIES</span>
         <ul className="sidebarList">
-          <li className="sidebarListItem">Life</li>
+          {categories.map((cat) => (
+            <li className="sidebarListItem" key={cat._id}>
+              {cat.name}
+            </li>
+          ))}
+          {/* <li className="sidebarListItem">Life</li>
           <li className="sidebarListItem">Music</li>
           <li className="sidebarListItem">Style</li>
           <li className="sidebarListItem">Sport</li>
           <li className="sidebarListItem">Tech</li>
-          <li className="sidebarListItem">Cinema</li>
+          <li className="sidebarListItem">Cinema</li> */}
         </ul>
       </div>
       <div className="sidebarItem">
