@@ -1,33 +1,40 @@
 import "./register.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useRef } from "react";
 import axios from "axios";
 
 export default function Register() {
   const [user, setUser] = useState({});
-  const username = useRef();
-  const email = useRef();
-  const password = useRef();
-  console.log(user);
+  const [usernameError, setUsernameError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const navigate = useNavigate();
+
   const submitFrom = async (e) => {
     e.preventDefault();
-    setUser({
-      username: username.current.value,
-      email: email.current.value,
-      password: password.current.value,
-    });
-    // await axios({
-    //   method: "POST",
-    //   url: "/auth/register",
-    //   data: user,
-    // })
-    // await axios
-    //   .post("/auth/register", user)
-    //   .then((res) => console.log(res))
-    //   .catch((err) => console.log("first", err));
-    const res = await axios.post('/auth/register',user)
-    console.log(res)
+    if (user.password.length < 8) {
+      setPasswordError(true);
+      setUsernameError(false)
+      setEmailError(false)
+      return;
+    }
+    setPasswordError(false);
+    axios
+      .post("/auth/register", user)
+      .then((response) => {
+        navigate("/login");
+        setUsernameError(false);
+        setEmailError(false);
+      })
+      .catch((error) => {
+        if (error.response.status === 403) {
+          setUsernameError(true);
+          setEmailError(false);
+        } else {
+          setUsernameError(false);
+          setEmailError(true);
+        }
+      });
   };
   return (
     <div className="register">
@@ -38,22 +45,38 @@ export default function Register() {
           className="registerInput"
           type="text"
           placeholder="Enter your username..."
-          ref={username}
+          onChange={(e) => setUser({ ...user, username: e.target.value })}
+          required
         />
+        {usernameError && (
+          <span className="error">
+            Username Invalid, Choose another Username
+          </span>
+        )}
         <label>Email</label>
         <input
           className="registerInput"
           type="email"
           placeholder="Enter your email..."
-          ref={email}
+          onChange={(e) => setUser({ ...user, email: e.target.value })}
+          required
         />
+        {emailError && (
+          <span className="error">Email Invalid, Choose Another Email</span>
+        )}
         <label>Password</label>
         <input
           className="registerInput"
           type="password"
           placeholder="Enter your password..."
-          ref={password}
+          onChange={(e) => setUser({ ...user, password: e.target.value })}
+          required
         />
+        {passwordError && (
+          <span className="error">
+            Should be greater than 8 characters
+          </span>
+        )}
         <button className="registerButton">Register</button>
       </form>
       <button className="registerLoginButton">
