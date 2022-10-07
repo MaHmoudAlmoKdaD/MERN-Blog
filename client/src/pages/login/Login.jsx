@@ -7,7 +7,7 @@ import axios from "axios";
 export default function Login() {
   const userRef = useRef();
   const passwordRef = useRef();
-  const { user, dispatch, isFetching } = useContext(Context);
+  const { user, dispatch, isFetching, error } = useContext(Context);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -28,12 +28,14 @@ export default function Login() {
           type: "LOGIN_FAILURE",
         });
       });
-      console.log(user)
-      console.log(isFetching)
+    // console.log("user1", user);
+    // console.log(isFetching);
   };
-  console.log(user)
+  console.log("user2", user);
+  console.log(isFetching);
+  console.log("error",error);
   return (
-    <div className="login">{console.log("rendering")}
+    <div className="login">
       <span className="loginTitle">Login</span>
       <form className="loginForm" onSubmit={handleSubmit}>
         <label>Username</label>

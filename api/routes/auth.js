@@ -40,7 +40,7 @@ router.post("/login", async (req, res) => {
     const user = await User.findOne({ username: req.body.username });
 
     if (!user) {
-      res.status(400).json("Wrong credentials!");
+      res.status(403).json("Wrong credentials!");
       return;
     }
     const validated = await comparePasswords(req.body.password, user.password);
