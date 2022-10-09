@@ -1,5 +1,5 @@
 import "./login.css";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import { useContext } from "react";
 import { Context } from "./../../context/Context";
@@ -8,8 +8,10 @@ export default function Login() {
   const userRef = useRef();
   const passwordRef = useRef();
   const { user, dispatch, isFetching, error } = useContext(Context);
-
+  const navigate = useNavigate()
+  
   const handleSubmit = (e) => {
+    
     e.preventDefault();
     dispatch({ type: "LOGIN_START" });
     axios
@@ -21,6 +23,7 @@ export default function Login() {
         dispatch({
           type: "LOGIN_SUCCESS",
           payload: response.data,
+          
         });
       })
       .catch((error) => {
