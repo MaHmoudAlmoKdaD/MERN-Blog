@@ -1,5 +1,5 @@
 import "./login.css";
-import { Link,useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useRef } from "react";
 import { useContext } from "react";
 import { Context } from "./../../context/Context";
@@ -8,10 +8,8 @@ export default function Login() {
   const userRef = useRef();
   const passwordRef = useRef();
   const { user, dispatch, isFetching, error } = useContext(Context);
-  const navigate = useNavigate()
-  
+
   const handleSubmit = (e) => {
-    
     e.preventDefault();
     dispatch({ type: "LOGIN_START" });
     axios
@@ -23,7 +21,6 @@ export default function Login() {
         dispatch({
           type: "LOGIN_SUCCESS",
           payload: response.data,
-          
         });
       })
       .catch((error) => {
@@ -31,12 +28,8 @@ export default function Login() {
           type: "LOGIN_FAILURE",
         });
       });
-    // console.log("user1", user);
-    // console.log(isFetching);
   };
-  console.log("user2", user);
-  console.log(isFetching);
-  console.log("error",error);
+
   return (
     <div className="login">
       <span className="loginTitle">Login</span>
@@ -57,7 +50,7 @@ export default function Login() {
           required
           ref={passwordRef}
         />
-        <button className="loginButton" type="submit">
+        <button className="loginButton" type="submit" disabled={isFetching}>
           Login
         </button>
       </form>
