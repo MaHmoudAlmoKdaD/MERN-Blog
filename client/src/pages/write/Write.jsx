@@ -1,6 +1,12 @@
 import "./write.css";
+import { useRef } from "react";
 
 export default function Write() {
+  const title = useRef();
+  const desc = useRef();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  };
   return (
     <div className="write">
       <img
@@ -8,7 +14,7 @@ export default function Write() {
         alt=""
         className="writeImg"
       />
-      <form className="writeForm">
+      <form className="writeForm" onSubmit={handleSubmit}>
         <div className="writeFormGroup">
           <label htmlFor="fileInput">
             <i className="writeIcon fa-solid fa-plus"></i>
@@ -29,7 +35,9 @@ export default function Write() {
             className="writeInput writeText"
           ></textarea>
         </div>
-        <button className="writeSubmit">Publish</button>
+        <button className="writeSubmit" type="submit">
+          Publish
+        </button>
       </form>
     </div>
   );
