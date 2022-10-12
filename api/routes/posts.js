@@ -5,6 +5,7 @@ const { verifyToken } = require("../helper/verifyToken");
 
 // CREATE POST
 router.post("/:userId", verifyToken, async (req, res) => {
+  console.log(req.params.userId)
   if (req.user.id === req.params.userId) {
     try {
       const newPost = new Post(req.body);

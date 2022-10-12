@@ -34,7 +34,6 @@ app.use("/api/post", postRoute);
 app.use("/api/category", categoryRoute);
 app.use("/api/upload", uploadImageRoute);
 
-
 app.listen("5000", () => {
   console.log("Backend Is Running");
 });
