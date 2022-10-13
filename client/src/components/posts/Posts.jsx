@@ -4,9 +4,9 @@ import "./posts.css";
 export default function Posts({ posts }) {
   return (
     <div className="posts">
-      {posts.map((post) => {
-        return <Post key={post._id} post={post} />;
-      })}
+      {posts.map((p) => (
+        <Post post={p} key={p._id}/>
+      ))}
     </div>
   );
 }

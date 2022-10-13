@@ -1,25 +1,12 @@
 const router = require("express").Router();
 const User = require("../models/User");
-
-const jwt = require("jsonwebtoken");
-const { comparePasswords } = require("../helper/comparePasswords");
-const { hashedPassword } = require("../helper/hashedPassword");
+const bcrypt = require("bcrypt");
 
 //REGISTER
 router.post("/register", async (req, res) => {
   try {
-    const hashedPass = await hashedPassword(req.body.password);
-    const username = await User.find({ username: req.body.username });
-    const email = await User.find({ email: req.body.email });
-
-    if (username.length !== 0) {
-      res.status(403).json("Username already exist...");
-      return;
-    } else if (email.length !== 0) {
-      res.status(401).json("Email already exist...");
-      return;
-    }
-
+    const salt = await bcrypt.genSalt(10);
+    const hashedPass = await bcrypt.hash(req.body.password, salt);
     const newUser = new User({
       username: req.body.username,
       email: req.body.email,
@@ -27,8 +14,7 @@ router.post("/register", async (req, res) => {
     });
 
     const user = await newUser.save();
-    const { password, ...userToClient } = user._doc;
-    res.status(200).json(userToClient);
+    res.status(200).json(user);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -38,28 +24,21 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({ username: req.body.username });
-
+    // !user && res.status(400).json("Wrong credentials!");
     if (!user) {
-      res.status(403).json("Wrong credentials!");
+      res.status(400).json("Wrong credentials!");
       return;
     }
-    const validated = await comparePasswords(req.body.password, user.password);
 
+    const validated = await bcrypt.compare(req.body.password, user.password);
+    // !validated && res.status(400).json("Wrong credentials!");
     if (!validated) {
       res.status(400).json("Wrong credentials!");
       return;
     }
 
-    const accessToken = jwt.sign(
-      {
-        id: user._id,
-      },
-      process.env.JWT_SEC,
-      { expiresIn: "3d" }
-    );
-
     const { password, ...others } = user._doc;
-    res.status(200).json({ ...others, accessToken });
+    res.status(200).json(others);
   } catch (err) {
     res.status(500).json(err);
   }

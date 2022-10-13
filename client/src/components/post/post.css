@@ -1,6 +1,6 @@
 .post {
   width: 385px;
-  margin: 0 25px 40px 25px;
+  margin: 0px 25px 40px 25px;
 }
 
 .postImg {
@@ -20,7 +20,8 @@
   font-family: "Varela Round", sans-serif;
   font-size: 11px;
   color: #be9656;
-  line-height: 15px;
+  line-height: 20px;
+  margin-top: 15px;
   margin-right: 10px;
   cursor: pointer;
 }
@@ -40,6 +41,7 @@
   color: #999;
   margin-top: 15px;
 }
+
 .postDesc {
   font-family: "Varela Round", sans-serif;
   font-size: 14px;
